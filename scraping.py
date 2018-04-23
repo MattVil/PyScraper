@@ -1,12 +1,14 @@
 import urllib.parse
 import urllib.request
 import sys
+import time
 from statistics import mean
 import matplotlib.pyplot as plt
 from bs4 import BeautifulSoup
 
 URL = 'https://www.amazon.fr/s/ref=nb_sb_noss_1?__mk_fr_FR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&url=search-alias%3Daps&field-keywords='
 NB_RESULT_SELECTED = 100
+LOG=False
 
 key_word = ""
 for i in range(1, len(sys.argv)):
@@ -20,7 +22,7 @@ prices = []
 cmpt_page = 1
 
 while(len(prices) < NB_RESULT_SELECTED):
-    print("\tPAGE {}".format(cmpt_page))
+    print("\tPAGE {}".format(cmpt_page), end=' ')
     req = urllib.request.Request(URL)
     resp = urllib.request.urlopen(req)
     respData = resp.read()
@@ -41,14 +43,21 @@ while(len(prices) < NB_RESULT_SELECTED):
         try:
             prices.append(float(price))
         except ValueError:
-            print("LOG : Oops! a string cannot be converted to float.")
+            if LOG:
+                print("LOG : Oops! a string cannot be converted to float.")
 
-    next_page = soup_page.find  ("a", id="pagnNextLink", class_="pagnNext")
-    # print(next_page)
-    URL = "https://www.amazon.fr" + next_page.get('href')
-    # print("URL : \t"+URL)
+    try:
+        next_page = soup_page.find  ("a", id="pagnNextLink", class_="pagnNext")
+        # print(next_page)
+        URL = "https://www.amazon.fr" + next_page.get('href')
+        # print("URL : \t"+URL)
+    except AttributeError:
+        if LOG:
+            print("LOG : Oops! No next page.")
+        break
     cmpt_page += 1
     print("Nb product : {}".format(len(prices)))
+    time.sleep(1)
 
 moyenne = mean(prices)
 
