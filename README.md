@@ -2,10 +2,10 @@
 This little web bot analyse price of your search on Amazon.fr
 
 ## Requierements
-..*Python3.5
-..*Urllib
-..*Beautifulsoup4
-..*Matplotlib
+* Python3.5
+* Urllib
+* Beautifulsoup4
+* Matplotlib
 
 ## Installation
 ```
